@@ -1,0 +1,13 @@
+<div class="layout">
+  <!-- Mapa -->
+  <div id="leaflet-map" class="map"></div>
+
+  <!-- Overlay do panorama -->
+  <div class="viewer-overlay" *ngIf="selecionado">
+    <div class="viewer-header">
+      <span>{{ selecionado.nome }}</span>
+      <button class="btn-fechar" (click)="fecharViewer()">Fechar</button>
+    </div>
+    <div #viewer class="viewer-container"></div>
+  </div>
+</div>

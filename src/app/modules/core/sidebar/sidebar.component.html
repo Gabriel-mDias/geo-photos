@@ -1,0 +1,10 @@
+<nav class="sidebar">
+  <ul>
+    <li *ngFor="let item of itens"
+        (click)="clickMenu(item)"
+        class="menu-item"
+        [title]="item.label">
+      <i class="{{ item.icon }}"></i>
+    </li>
+  </ul>
+</nav>
