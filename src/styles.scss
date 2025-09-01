@@ -1,1 +1,85 @@
-/* You can add global styles to this file, and also import other style files */
+@import './assets/vars';
+
+/* Estilizações globais */
+
+/**
+ * Estilizações mínimas para o corpo
+ */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.content-body {
+    display: flex;
+    overflow: hidden;
+    font-family: $global-font-family;
+    background-color: $body-color;
+
+    > app-sidebar {
+        height: 100vh;
+    }
+}
+
+/**
+ * Textos
+ */
+span {
+    font-family: $global-font-family;
+}
+
+p {
+    font-family: $global-font-family;
+}
+
+/**
+ * Títulos
+ */
+h1 {
+    font-family: $global-font-family;
+}
+
+h2 {
+    font-family: $global-font-family;
+}
+
+h3 {
+    font-family: $global-font-family;
+}
+
+h4 {
+    font-family: $global-font-family;
+}
+
+h5 {
+    font-family: $global-font-family;
+}
+
+h6 {
+    font-family: $global-font-family;
+}
+
+/**
+ * Botões
+ */
+button {
+    font-family: $global-font-family;
+
+    &.primary {
+        background-color: $primary-color;
+        color: $quaternary-color;
+
+        &:hover {
+            background-color: darken($primary-color, 10%);
+        }
+    }
+
+    &.secondary {
+        background-color: $tertiary-color;
+        color: $secondary-color;
+
+        &:hover {
+            background-color: darken($tertiary-color, 10%);
+        }
+    }
+}

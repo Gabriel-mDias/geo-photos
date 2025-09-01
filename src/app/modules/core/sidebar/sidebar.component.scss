@@ -1,0 +1,58 @@
+@import './../assets/core.vars';
+
+.sidebar {
+  width: 64px;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1rem;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+  z-index: 1000;
+
+  background: $sidebar-color;
+  color: $quaternary-color;
+  transition: width 0.3s ease;
+
+  &.expanded {
+    width: 200px;
+  }
+
+  .menu {
+    flex: 1;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      fa-icon {
+        font-size: 20px;
+      }
+
+      .menu-label {
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 12px 12px 40px 12px;
+
+    .toggle-btn {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: $quaternary-color;
+      cursor: pointer;
+      font-size: 18px;
+    }
+  }
+}

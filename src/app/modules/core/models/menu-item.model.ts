@@ -1,6 +1,6 @@
 export interface MenuItem {
     label: string
-    tootip?: string 
-    icon: string
+    tooltip?: string 
+    icon: any
     redirectTo: string
 }

@@ -1,10 +1,18 @@
-<nav class="sidebar">
-  <ul>
+<nav class="sidebar" (click)="expanded = !expanded" [class.expanded]="expanded">
+  <ul class="menu" >
     <li *ngFor="let item of itens"
-        (click)="clickMenu(item)"
+        (click)="clickMenu(item); $event.stopPropagation()"
         class="menu-item"
-        [title]="item.label">
-      <i class="{{ item.icon }}"></i>
+        [title]="expanded && item.tooltip ? item.tooltip : item.label">
+
+      <fa-icon [icon]="item.icon"></fa-icon>
+      <span class="menu-label" *ngIf="expanded">{{ item.label }}</span>
     </li>
   </ul>
+
+  <div class="sidebar-footer">
+    <button class="toggle-btn">
+      <fa-icon [icon]="iconArrow"></fa-icon>
+    </button>
+  </div>
 </nav>
