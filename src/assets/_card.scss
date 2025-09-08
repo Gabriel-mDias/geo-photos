@@ -1,0 +1,32 @@
+/**
+ * Customização da estilização de um card
+ */
+.card {
+    margin: 1rem 0.5rem; 
+    display: flex;
+    flex-direction: column;
+
+    .card-title {
+        margin: 1rem 0.5rem;
+    }
+
+    .card-sub-title{
+        margin: 0 1rem 1rem 0.5rem;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+        margin: 0.5rem;
+        border-radius: 15px;
+    }
+
+    .card-footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
+        button {
+            margin-left: 0.5rem;
+        }
+    }
+}

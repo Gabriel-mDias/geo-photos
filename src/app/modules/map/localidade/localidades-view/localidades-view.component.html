@@ -1,2 +1,50 @@
-<p>localidades-view works!</p>
-<view-map-localidades></view-map-localidades>
+<div class="card" *ngIf="showHeader">
+    <h2 class="card-title">Localidades</h2>
+    <h5 class="card-sub-title">Página para visualização das localidades cadastradas.</h5>
+    <div class="card-footer">
+        <button type="button" class="btn btn-primary"   (click)="clickLocalidades()">Exibir lista</button>
+        <button type="button" class="btn btn-secondary" (click)="clickMap()">Exibir mapa</button>
+    </div>
+</div>
+
+<!--Tabela-->
+<div class="card" *ngIf="loadLocalidades">
+    <h2 class="card-title">Lista de localidades</h2>
+    <div class="card-body">
+        <table class="table" *ngIf="showLocalidadesList; else noItem">
+            <thead>
+                <tr>
+                    <th scope="col-1">ID</th>
+                    <th scope="col-3">Nome</th>
+                    <th scope="col-6">Descrição</th>
+                    <th scope="col-1">Latitude</th>
+                    <th scope="col-1">Longetude</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of pontos">
+                    <th scope="row">{{ item.id }}</th>
+                    <td>{{ item.nome }}</td>
+                    <td>{{ item.descricao }}</td>
+                    <td>{{ item.latitude }}</td>
+                    <td>{{ item.longitude }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<ng-template #noItem>
+    <p>Não foi encontrada nenhuma localidade.</p>
+</ng-template>
+
+<!--Mapa-->
+<div class="card card-map" *ngIf="loadMap">
+    <div class="card-header-map">
+        <h2 class="card-title">Visualização dos pontos cadastrados no mapa</h2>
+        <button type="button" class="btn btn-primary" (click)="clickFullscreenMap()"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+    </div>
+    <div class="card-body">
+        <view-map-localidades [localidades]="pontos" [showFullscreen]="showOnlyMap"></view-map-localidades>
+    </div>
+</div>

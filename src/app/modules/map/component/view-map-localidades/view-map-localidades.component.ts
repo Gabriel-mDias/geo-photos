@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { Localidade } from '../../../../models/localidade.model';
 import * as L from 'leaflet';
 
@@ -16,51 +16,53 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
   /*
    * Variáveis internas 
    */
-  localidades: Localidade[] = [];
+  _localidades: Localidade[] = [];
+  map?: L.Map;
+  selecionado?: Localidade;
+  scene?: any;
+  isFullScreen: boolean = false;
+  
+  /*
+   * Itens do HTML 
+   */
+  @ViewChild('viewer', { static: false }) viewerRef?: ElementRef<HTMLDivElement>;
+
 
   /*
    * Getters and Setters 
    */
-  map?: L.Map;
-  selecionado?: Localidade;
-  scene?: any;
+  @Input() set localidades(value: Localidade[]) {
+    this._localidades = value ?? []
+  }
 
-  @ViewChild('viewer', { static: false }) viewerRef?: ElementRef<HTMLDivElement>;
+  get localidades(): Localidade[] {
+    return this._localidades
+  }
 
-  pontos: Localidade[] = [
-    {
-      id: 'p1',
-      nome: 'Av. Paulista',
-      descricao: 'Avenida famosa em São Paulo',
-      latitude: -23.561684,
-      longitude: -46.655981,
-      url: 'https://your-cdn.com/panos/paulista.jpg'
-    },
-    {
-      id: 'p2',
-      nome: 'Ibirapuera',
-      latitude: -23.587416,
-      longitude: -46.657634,
-      url: 'https://your-cdn.com/panos/ibirapuera.jpg'
-    },
-    {
-      id: 'p3',
-      nome: 'Vila Madalena',
-      descricao: 'Bairro boêmio de São Paulo',
-      latitude: -23.555465,
-      longitude: -46.691505,
-      url: 'https://your-cdn.com/panos/vila-madalena.jpg'
-    },
-  ];
+  @Input() set showFullscreen(value: boolean) {
+    this.isFullScreen = value
+  }
 
   ngAfterViewInit(): void {
+    this._initLeaflet()
+    this._addingMarksByLocalidades()
+  }
+
+  private _initLeaflet(): void {
+    debugger
+    if( this.map ){
+      return
+    }
+
     this.map = L.map('leaflet-map').setView([this.START_LATITUDE, this.START_LONGITUDE], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
+  }
 
-    this.pontos.forEach(p => {
+  private _addingMarksByLocalidades(): void {
+    this.localidades.forEach(p => {
       L.marker([p.latitude, p.longitude])
         .addTo(this.map!)
         .bindTooltip(p.nome)
