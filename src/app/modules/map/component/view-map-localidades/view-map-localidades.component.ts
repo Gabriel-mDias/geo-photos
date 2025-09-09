@@ -41,6 +41,8 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
 
   @Input() set showFullscreen(value: boolean) {
     this.isFullScreen = value
+
+    this._renderizarMapaAposResize()
   }
 
   ngAfterViewInit(): void {
@@ -62,6 +64,8 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
   }
 
   private _addingMarksByLocalidades(): void {
+    L.layerGroup().clearLayers();
+
     this.localidades.forEach(p => {
       L.marker([p.latitude, p.longitude])
         .addTo(this.map!)
@@ -79,6 +83,14 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
   fecharViewer(): void {
     this.selecionado = undefined;
     this.scene = undefined;
+  }
+
+  private _renderizarMapaAposResize(): void {
+    if( !this.map ) return
+
+    setTimeout(() => {
+      this.map?.invalidateSize();
+    }, 150);
   }
 
   private renderizarPanorama(): void {
