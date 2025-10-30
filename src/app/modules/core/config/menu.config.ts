@@ -1,5 +1,5 @@
 import { MenuItem } from "../models/menu-item.model";
-import { faUser, faGear, faPen, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faGear, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 
 /**

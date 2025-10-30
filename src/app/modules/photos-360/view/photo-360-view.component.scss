@@ -1,0 +1,16 @@
+/* Styles for the 360 viewer (Pannellum) */
+.pano-container {
+	display: block;
+	width: 100%;        /* fill the parent width by default */
+	max-width: 100%;
+	height: auto;       /* height will be set dynamically based on image aspect */
+	background-color: #000;
+
+    > canvas {
+        height: auto !important;
+        width: auto !important;
+    }
+}
+
+/* Responsive height is computed in TS from the image aspect ratio, so no fixed media rules are needed here. */
+

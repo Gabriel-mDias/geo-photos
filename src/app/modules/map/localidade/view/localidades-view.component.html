@@ -42,7 +42,9 @@
 <div class="card card-map" *ngIf="loadMap">
     <div class="card-header-map">
         <h2 class="card-title">Visualização dos pontos cadastrados no mapa</h2>
-        <button type="button" class="btn btn-primary" (click)="clickFullscreenMap()"><fa-icon icon="faExpand"></fa-icon></button>
+        <button type="button" class="btn btn-primary action-button" (click)="clickFullscreenMap()">
+            <fa-icon icon="up-right-and-down-left-from-center"></fa-icon>
+        </button>
     </div>
     <div class="card-body">
         <view-map-localidades [localidades]="pontos" [showFullscreen]="showOnlyMap"></view-map-localidades>

@@ -1,11 +1,11 @@
 import { RouterModule, Routes } from "@angular/router";
-import { LocalidadesViewComponent } from "./localidade/view/localidades-view.component";
 import { NgModule } from "@angular/core";
+import { Photo360ViewComponent } from "./view/photo-360-view.component";
 
 const routes: Routes = [
     {
         path: 'view',
-        component: LocalidadesViewComponent
+        component: Photo360ViewComponent,
     },
 ]
 
@@ -13,4 +13,4 @@ const routes: Routes = [
    imports: [RouterModule.forChild(routes)],
    exports: [RouterModule],
 })
-export class MapRoutingModule {}
+export class Photos360RoutingModule {}
