@@ -1,6 +1,7 @@
 import { RouterModule, Routes } from "@angular/router";
 import { LocalidadesViewComponent } from "./localidade/view/localidades-view.component";
 import { NgModule } from "@angular/core";
+import { LocalidadeStore } from "../../stores/localidade.store";
 
 const routes: Routes = [
     {
@@ -10,6 +11,9 @@ const routes: Routes = [
 ]
 
 @NgModule({
+   providers: [
+    LocalidadeStore,
+   ],
    imports: [RouterModule.forChild(routes)],
    exports: [RouterModule],
 })

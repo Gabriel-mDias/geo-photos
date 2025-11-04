@@ -29,6 +29,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/pannellum/build",
+                "output": "assets/pannellum"
               }
             ],
             "styles": [

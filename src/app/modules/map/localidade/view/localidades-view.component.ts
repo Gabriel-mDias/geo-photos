@@ -1,45 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Localidade } from '../../../../models/localidade.model';
+import { LocalidadeStore } from '../../../../stores/localidade.store';
+import { SessionStorageService } from '../../../../services/session-storage.service';
+import { RouterService } from '../../../../services/router.service';
 
 @Component({
   selector: 'app-localidades-view',
   templateUrl: './localidades-view.component.html',
   styleUrl: './localidades-view.component.scss'
 })
-export class LocalidadesViewComponent {
+export class LocalidadesViewComponent implements OnInit {
 
   /*
    * Variáveis de controle
    */
 
-  /**
-   * mock localidades. Deveria vir do Backend
-   */
-  pontos: Localidade[] = [
-      {
-        id: 'p1',
-        nome: 'Av. Paulista',
-        descricao: 'Avenida famosa em São Paulo',
-        latitude: -23.561684,
-        longitude: -46.655981,
-        url: 'https://your-cdn.com/panos/paulista.jpg'
-      },
-      {
-        id: 'p2',
-        nome: 'Ibirapuera',
-        latitude: -23.587416,
-        longitude: -46.657634,
-        url: 'https://your-cdn.com/panos/ibirapuera.jpg'
-      },
-      {
-        id: 'p3',
-        nome: 'Vila Madalena',
-        descricao: 'Bairro boêmio de São Paulo',
-        latitude: -23.555465,
-        longitude: -46.691505,
-        url: 'https://your-cdn.com/panos/vila-madalena.jpg'
-      },
-    ];
+  pontos: Localidade[] = [];
 
   /*
    * Variáveis internas do componente 
@@ -60,6 +36,21 @@ export class LocalidadesViewComponent {
     return !this.showHeader && !this.loadLocalidades && this.loadMap
   }
 
+  constructor(
+    private store: LocalidadeStore,
+    private session: SessionStorageService,
+    private routerService: RouterService
+  ) {}
+
+  ngOnInit(): void {
+    this.store.getAll().subscribe({
+      next: (data: Localidade[]) => { 
+        this.pontos = data || []
+        this.loadMap = true 
+      },
+      error: () => this.pontos = []
+    });
+  }
 
   /*
    * Actions
@@ -82,6 +73,13 @@ export class LocalidadesViewComponent {
 
     this.showHeader = false;
     this.loadLocalidades = false;
+  }
+
+  viewPhoto(id?: string): void {
+    if (!id) return;
+
+    this.session.set('selectedLocalidadeId', id);
+    this.routerService.navigateTo(`photos-360/view/${id}`);
   }
 
 }

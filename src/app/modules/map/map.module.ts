@@ -4,6 +4,7 @@ import { ViewMapLocalidadesComponent } from './component/view-map-localidades/vi
 import { LocalidadesViewComponent } from './localidade/view/localidades-view.component';
 import { MapRoutingModule } from './map.routing.module';
 import { SharedModule } from '../shared/shared.module';
+import { LocalidadeStore } from '../../stores/localidade.store';
 
 
 
@@ -11,6 +12,9 @@ import { SharedModule } from '../shared/shared.module';
   declarations: [
     ViewMapLocalidadesComponent,
     LocalidadesViewComponent
+  ],
+  providers: [
+    LocalidadeStore,
   ],
   exports: [
     ViewMapLocalidadesComponent

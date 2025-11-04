@@ -3,12 +3,16 @@ import { CommonModule } from '@angular/common';
 import { Photos360RoutingModule } from './photos-360.routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { Photo360ViewComponent } from './view/photo-360-view.component';
+import { LocalidadeStore } from '../../stores/localidade.store';
 
 
 
 @NgModule({
   declarations: [
     Photo360ViewComponent,
+  ],
+  providers: [
+    LocalidadeStore,
   ],
   exports: [],
   imports: [

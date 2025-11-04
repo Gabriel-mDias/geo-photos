@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faEye, faExpand } from '@fortawesome/free-solid-svg-icons';
 import { SharedModule } from '../shared/shared.module';
 
 
@@ -15,6 +16,11 @@ import { SharedModule } from '../shared/shared.module';
   imports: [
     CommonModule,
     SharedModule,
+    FontAwesomeModule,
   ]
 })
-export class CoreModule { }
+export class CoreModule { 
+  constructor(library: FaIconLibrary) {
+    library.addIcons(faEye, faExpand);
+  }
+}

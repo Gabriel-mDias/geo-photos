@@ -1,0 +1,35 @@
+{
+    "localidade": [
+    {
+        "id": "p1",
+        "nome": "Av. Paulista",
+        "descricao": "Avenida famosa em São Paulo",
+        "latitude": -23.561684,
+        "longitude": -46.655981,
+        "url": "https://cdn.eso.org/images/large/pano360-alma.jpg"
+      },
+      {
+        "id": "p2",
+        "nome": "Ibirapuera",
+        "latitude": -23.587416,
+        "longitude": -46.657634,
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Efferen_360%C2%B0_Panorama.png"
+      },
+      {
+        "id": "p3",
+        "nome": "Vila Madalena",
+        "descricao": "Bairro boêmio de São Paulo",
+        "latitude": -23.555465,
+        "longitude": -46.691505,
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/bd/360_Panorama_of_Eagle_crash_site_by_Nils_Strindberg_%281897%29.png"
+      },
+      {
+        "id": "p4",
+        "nome": "Mercado Municipal",
+        "descricao": "Mercado famoso por seus sanduíches de mortadela",
+        "latitude": -23.541414,
+        "longitude": -46.631928,
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/53/Panorama_large.png"
+      }
+    ]
+}

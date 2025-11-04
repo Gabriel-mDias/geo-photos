@@ -4,7 +4,7 @@ import { Photo360ViewComponent } from "./view/photo-360-view.component";
 
 const routes: Routes = [
     {
-        path: 'view',
+        path: 'view/:id',
         component: Photo360ViewComponent,
     },
 ]

@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { Localidade } from '../../../../models/localidade.model';
 import * as L from 'leaflet';
+import { SessionStorageService } from '../../../../services/session-storage.service';
+import { RouterService } from '../../../../services/router.service';
 
 @Component({
   selector: 'view-map-localidades',
@@ -41,9 +43,13 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
 
   @Input() set showFullscreen(value: boolean) {
     this.isFullScreen = value
-
     this._renderizarMapaAposResize()
   }
+
+  constructor(
+      private session: SessionStorageService,
+      private routerService: RouterService
+  ) {}
 
   ngAfterViewInit(): void {
     this._initLeaflet()
@@ -51,7 +57,6 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
   }
 
   private _initLeaflet(): void {
-    debugger
     if( this.map ){
       return
     }
@@ -75,9 +80,14 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
   }
 
   onMarkerClick(ponto: Localidade): void {
-    this.selecionado = ponto;
-    console.log('Ponto selecionado:', ponto);
-    setTimeout(() => this.renderizarPanorama(), 0);
+    this.viewPhoto(ponto.id)
+  }
+
+  viewPhoto(id?: string): void {
+    if (!id) return;
+
+    this.session.set('selectedLocalidadeId', id);
+    this.routerService.navigateTo(`photos-360/view/${id}`);
   }
 
   fecharViewer(): void {
@@ -91,10 +101,6 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.map?.invalidateSize();
     }, 150);
-  }
-
-  private renderizarPanorama(): void {
-    //TODO: Abrir o Marzipano
   }
 
   ngOnDestroy(): void {
