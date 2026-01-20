@@ -5,6 +5,7 @@
   height: 100vh;
   flex-shrink: 0;
   position: sticky;
+  top: 0;
 
   display: flex;
   flex-direction: column;
@@ -14,7 +15,7 @@
   z-index: 1000;
 
   background: $sidebar-color;
-  color: $quaternary-color;
+  color: $secondary-color;
   transition: width 0.3s ease;
 
   &.expanded {
@@ -34,6 +35,10 @@
       padding: 12px;
       cursor: pointer;
       transition: background 0.2s;
+      color: $secondary-color;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.72rem;
 
       fa-icon {
         font-size: 20px;
@@ -41,6 +46,12 @@
 
       .menu-label {
         white-space: nowrap;
+      }
+
+      &:hover {
+        color: $tertiary-color;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
       }
     }
   }
@@ -52,9 +63,43 @@
       width: 100%;
       background: transparent;
       border: none;
-      color: $quaternary-color;
+      color: $secondary-color;
       cursor: pointer;
       font-size: 18px;
     }
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .sidebar.expanded {
+    width: 100%;
+  }
+
+  .sidebar .menu {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .sidebar .menu .menu-item {
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .sidebar .sidebar-footer {
+    display: none;
   }
 }

@@ -1,16 +1,73 @@
 /* Styles for the 360 viewer (Pannellum) */
 .pano-container {
 	display: block;
-	width: 100%;        /* fill the parent width by default */
+	width: 100%;
+	height: clamp(320px, 65vh, 760px);
+	min-height: 320px;
 	max-width: 100%;
-	height: auto;       /* height will be set dynamically based on image aspect */
+	position: relative;
 	background-color: #000;
-
-    > canvas {
-        height: auto !important;
-        width: auto !important;
-    }
 }
 
-/* Responsive height is computed in TS from the image aspect ratio, so no fixed media rules are needed here. */
+.pano-container .pnlm-container,
+.pano-container .pnlm-render-container,
+.pano-container canvas {
+	height: 100% !important;
+	width: 100% !important;
+}
 
+.viewer-overlay-controls {
+	position: absolute;
+	right: 1rem;
+	bottom: 1rem;
+	display: flex;
+	gap: 0.5rem;
+	z-index: 5;
+}
+
+.viewer-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0 0.5rem 0.75rem 0.5rem;
+}
+
+.viewer-nav {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.viewer-counter {
+	font-size: 0.85rem;
+	color: #5a5a5a;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.nav-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+	.viewer-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.viewer-nav {
+		justify-content: space-between;
+	}
+
+	.viewer-counter {
+		text-align: center;
+	}
+
+	.viewer-overlay-controls {
+		right: 0.5rem;
+		bottom: 0.5rem;
+		flex-direction: column;
+	}
+}

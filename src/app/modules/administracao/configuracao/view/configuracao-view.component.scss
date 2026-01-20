@@ -1,0 +1,72 @@
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.config-item {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #eceff3;
+  background: #f6f7fb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.config-label {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+  color: #5f5f5f;
+}
+
+.config-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #001a51;
+}
+
+.integration-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.integration-card {
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid #e3e6ec;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.integration-card h4 {
+  margin: 0;
+}
+
+.integration-card p {
+  margin: 0;
+  color: #5a5a5a;
+}
+
+.status-pill {
+  align-self: flex-start;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #eef0f5;
+  color: #2d2d2d;
+}
+
+@media (max-width: 700px) {
+  .config-grid,
+  .integration-grid {
+    grid-template-columns: 1fr;
+  }
+}

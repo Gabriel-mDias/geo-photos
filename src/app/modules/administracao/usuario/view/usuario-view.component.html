@@ -1,0 +1,64 @@
+<div class="card">
+  <h2 class="card-title">Usuarios</h2>
+  <h5 class="card-sub-title">Visao geral da equipe, convites pendentes e niveis de acesso.</h5>
+  <div class="card-footer">
+    <button type="button" class="btn btn-secondary">Exportar</button>
+    <button type="button" class="btn btn-primary">Novo usuario</button>
+  </div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Resumo rapido</h3>
+  <div class="card-body">
+    <div class="stats-grid">
+      <div class="stat" *ngFor="let item of resumo">
+        <span class="stat-label">{{ item.label }}</span>
+        <span class="stat-value">{{ item.valor }}</span>
+        <span class="stat-detail">{{ item.detalhe }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Equipe e acessos</h3>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col-3">Nome</th>
+          <th scope="col-3">Email</th>
+          <th scope="col-2">Perfil</th>
+          <th scope="col-2">Status</th>
+          <th scope="col-2">Ultimo acesso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.nome }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.perfil }}</td>
+          <td>
+            <span class="status-pill" [ngClass]="usuario.status | lowercase">
+              {{ usuario.status }}
+            </span>
+          </td>
+          <td>{{ usuario.ultimoAcesso }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Perfis de acesso</h3>
+  <div class="card-body">
+    <div class="perfil-grid">
+      <div class="perfil-card" *ngFor="let perfil of perfis">
+        <h4>{{ perfil.titulo }}</h4>
+        <p>{{ perfil.descricao }}</p>
+        <button type="button" class="btn btn-secondary">Gerenciar</button>
+      </div>
+    </div>
+  </div>
+</div>

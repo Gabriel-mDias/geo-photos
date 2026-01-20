@@ -1,4 +1,4 @@
-<nav class="sidebar" (click)="expanded = !expanded" [class.expanded]="expanded">
+<nav class="sidebar" (click)="toggleExpanded()" [class.expanded]="expanded">
   <ul class="menu" >
     <li *ngFor="let item of itens"
         (click)="clickMenu(item); $event.stopPropagation()"

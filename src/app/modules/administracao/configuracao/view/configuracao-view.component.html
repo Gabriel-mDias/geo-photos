@@ -1,0 +1,59 @@
+<div class="card">
+  <h2 class="card-title">Configuracoes</h2>
+  <h5 class="card-sub-title">Ajustes gerais da plataforma, seguranca e integracoes.</h5>
+  <div class="card-footer">
+    <button type="button" class="btn btn-secondary">Restaurar padroes</button>
+    <button type="button" class="btn btn-primary">Salvar alteracoes</button>
+  </div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Ambiente e identidade</h3>
+  <div class="card-body">
+    <div class="config-grid">
+      <div class="config-item" *ngFor="let item of ambientes">
+        <span class="config-label">{{ item.label }}</span>
+        <span class="config-value">{{ item.value }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Seguranca</h3>
+  <div class="card-body">
+    <div class="config-grid">
+      <div class="config-item" *ngFor="let item of seguranca">
+        <span class="config-label">{{ item.label }}</span>
+        <span class="config-value">{{ item.value }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Notificacoes</h3>
+  <div class="card-body">
+    <div class="config-grid">
+      <div class="config-item" *ngFor="let item of notificacoes">
+        <span class="config-label">{{ item.label }}</span>
+        <span class="config-value">{{ item.value }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Integracoes</h3>
+  <div class="card-body">
+    <div class="integration-grid">
+      <div class="integration-card" *ngFor="let item of integracoes">
+        <div>
+          <h4>{{ item.titulo }}</h4>
+          <p>{{ item.descricao }}</p>
+        </div>
+        <span class="status-pill">{{ item.status }}</span>
+      </div>
+    </div>
+  </div>
+</div>

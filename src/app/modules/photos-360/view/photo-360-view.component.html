@@ -1,8 +1,31 @@
 <div class="card">
     <h2 class="card-title">Foto 360</h2>
     <h5 class="card-sub-title">Visualização em 360°</h5>
+    <div class="viewer-toolbar">
+        <button type="button" class="btn btn-secondary nav-btn" (click)="goBackToLocalidades()">
+            Voltar para localidades
+        </button>
+        <div class="viewer-nav" *ngIf="localidades.length > 1">
+            <button type="button" class="btn btn-secondary nav-btn" (click)="goPrevious()" [disabled]="!hasPrevious">
+                Anterior
+            </button>
+            <div class="viewer-counter" *ngIf="currentPosition">
+                {{ currentPosition }}
+            </div>
+            <button type="button" class="btn btn-primary nav-btn" (click)="goNext()" [disabled]="!hasNext">
+                Próximo
+            </button>
+        </div>
+    </div>
     <div class="card-body">
         <div #panoContainer class="pano-container" role="region" aria-label="visualizador 360"></div>
+        <div #overlayControls class="viewer-overlay-controls" *ngIf="localidades.length > 1">
+            <button type="button" class="btn btn-secondary nav-btn" (click)="goPrevious()" [disabled]="!hasPrevious">
+                Anterior
+            </button>
+            <button type="button" class="btn btn-primary nav-btn" (click)="goNext()" [disabled]="!hasNext">
+                Próximo
+            </button>
+        </div>
     </div>
 </div>
-

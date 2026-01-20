@@ -41,18 +41,7 @@ export class PannellumService {
       const cdnCss = 'https://unpkg.com/pannellum/build/pannellum.css';
       const cdnJs = 'https://unpkg.com/pannellum/build/pannellum.js';
 
-      // preload image to compute aspect ratio
-      await new Promise<void>((resolve) => {
-         const img = new Image();
-         img.crossOrigin = 'anonymous';
-         img.onload = () => {
-            const aspect = img.naturalHeight / img.naturalWidth || 0.5;
-            container.style.height = `${Math.round((container.clientWidth || container.getBoundingClientRect().width) * aspect)}px`;
-            resolve();
-         };
-         img.onerror = () => resolve();
-         img.src = panoUrl;
-      });
+      // container height is controlled by CSS to keep a consistent viewport
 
       // load assets preferring local
       await Promise.all([

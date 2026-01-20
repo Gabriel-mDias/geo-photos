@@ -61,6 +61,8 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
       return
     }
 
+    L.Icon.Default.imagePath = '/media/';
+
     this.map = L.map('leaflet-map').setView([this.START_LATITUDE, this.START_LONGITUDE], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

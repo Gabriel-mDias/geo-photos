@@ -32,6 +32,11 @@
               },
               {
                 "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images",
+                "output": "media"
+              },
+              {
+                "glob": "**/*",
                 "input": "node_modules/pannellum/build",
                 "output": "assets/pannellum"
               }
@@ -95,6 +100,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images",
+                "output": "media"
               }
             ],
             "styles": [

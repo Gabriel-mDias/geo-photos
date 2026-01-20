@@ -16,12 +16,12 @@ export const MENUS_ITENS: MenuItem[] = [
         label: 'Usuários',
         icon: faUser,
         tooltip: 'Textinho descritivo sobre os usuários',
-        redirectTo: 'page'
+        redirectTo: 'administracao/usuarios'
     },
     {
         label: 'Configurações',
         icon: faGear,
         tooltip: 'Textinho descritivo sobre os usuários',
-        redirectTo: 'page'
+        redirectTo: 'administracao/configuracoes'
     },
 ]
