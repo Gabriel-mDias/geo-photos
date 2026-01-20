@@ -2,6 +2,10 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
     { 
+        path: 'inicio', 
+        loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule) 
+    },
+    { 
         path: 'localidades', 
         loadChildren: () => import('./modules/map/map.module').then(m => m.MapModule) 
     },

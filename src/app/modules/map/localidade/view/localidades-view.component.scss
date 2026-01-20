@@ -10,6 +10,41 @@
     overflow-x: auto;
 }
 
+.table-controls {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+
+.page-size {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 180px;
+}
+
+.page-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.page-label,
+.page-total {
+    font-size: 0.85rem;
+    color: #5a5a5a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.page-input {
+    width: 90px;
+}
+
 table {
     width: 100%;
     min-width: 640px;

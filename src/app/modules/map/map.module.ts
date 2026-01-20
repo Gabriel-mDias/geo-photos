@@ -5,13 +5,15 @@ import { LocalidadesViewComponent } from './localidade/view/localidades-view.com
 import { MapRoutingModule } from './map.routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { LocalidadeStore } from '../../stores/localidade.store';
+import { LocalidadesImportComponent } from './localidade/import/localidades-import.component';
 
 
 
 @NgModule({
   declarations: [
     ViewMapLocalidadesComponent,
-    LocalidadesViewComponent
+    LocalidadesViewComponent,
+    LocalidadesImportComponent
   ],
   providers: [
     LocalidadeStore,

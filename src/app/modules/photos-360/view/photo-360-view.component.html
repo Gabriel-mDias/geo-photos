@@ -16,15 +16,36 @@
                 Próximo
             </button>
         </div>
+        <div class="viewer-step" *ngIf="localidades.length > 1">
+            <label for="stepSize" class="viewer-step-label">Pular</label>
+            <select id="stepSize" class="form-select form-select-sm" [(ngModel)]="stepSize">
+                <option *ngFor="let step of stepOptions" [ngValue]="step">{{ step }}</option>
+            </select>
+        </div>
     </div>
     <div class="card-body">
         <div #panoContainer class="pano-container" role="region" aria-label="visualizador 360"></div>
-        <div #overlayControls class="viewer-overlay-controls" *ngIf="localidades.length > 1">
-            <button type="button" class="btn btn-secondary nav-btn" (click)="goPrevious()" [disabled]="!hasPrevious">
+        <div #overlayControls class="viewer-overlay-controls">
+            <button
+                *ngIf="localidades.length > 1"
+                type="button"
+                class="btn btn-secondary nav-btn"
+                (click)="goPrevious()"
+                [disabled]="!hasPrevious"
+            >
                 Anterior
             </button>
-            <button type="button" class="btn btn-primary nav-btn" (click)="goNext()" [disabled]="!hasNext">
+            <button
+                *ngIf="localidades.length > 1"
+                type="button"
+                class="btn btn-primary nav-btn"
+                (click)="goNext()"
+                [disabled]="!hasNext"
+            >
                 Próximo
+            </button>
+            <button type="button" class="btn btn-outline-light nav-btn" (click)="toggleFullscreen()">
+                {{ isFullscreen ? 'Sair da tela cheia' : 'Tela cheia' }}
             </button>
         </div>
     </div>

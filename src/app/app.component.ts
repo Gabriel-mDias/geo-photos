@@ -14,4 +14,5 @@ import { SidebarComponent } from "./modules/core/sidebar/sidebar.component";
 })
 export class AppComponent {
   title = 'poc-geo-photos';
+  currentYear = new Date().getFullYear();
 }

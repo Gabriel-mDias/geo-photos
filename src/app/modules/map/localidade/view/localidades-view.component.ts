@@ -16,6 +16,9 @@ export class LocalidadesViewComponent implements OnInit {
    */
 
   pontos: Localidade[] = [];
+  pageSizeOptions: number[] = [10, 25, 50, 100, 250, 500];
+  pageSize: number = 25;
+  currentPage: number = 1;
 
   /*
    * Variáveis internas do componente 
@@ -46,9 +49,13 @@ export class LocalidadesViewComponent implements OnInit {
     this.store.getAll().subscribe({
       next: (data: Localidade[]) => { 
         this.pontos = data || []
+        this._syncPagination();
         this.loadMap = true 
       },
-      error: () => this.pontos = []
+      error: () => {
+        this.pontos = []
+        this._syncPagination();
+      }
     });
   }
 
@@ -80,6 +87,53 @@ export class LocalidadesViewComponent implements OnInit {
 
     this.session.set('selectedLocalidadeId', id);
     this.routerService.navigateTo(`photos-360/view/${id}`);
+  }
+
+  viewImport(): void {
+    this.routerService.navigateTo('localidades/importar');
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.pontos.length / this.pageSize));
+  }
+
+  get pagedLocalidades(): Localidade[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.pontos.slice(start, start + this.pageSize);
+  }
+
+  onPageSizeChange(event: Event): void {
+    const value = Number((event.target as HTMLSelectElement).value);
+    if (!Number.isFinite(value) || value <= 0) return;
+    this.pageSize = value;
+    this.currentPage = 1;
+  }
+
+  onPageInput(event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value);
+    if (!Number.isFinite(value)) return;
+    this.currentPage = this._clampPage(Math.floor(value));
+  }
+
+  goPreviousPage(): void {
+    if (this.currentPage <= 1) return;
+    this.currentPage = this.currentPage - 1;
+  }
+
+  goNextPage(): void {
+    if (this.currentPage >= this.totalPages) return;
+    this.currentPage = this.currentPage + 1;
+  }
+
+  private _syncPagination(): void {
+    this.currentPage = this._clampPage(this.currentPage);
+  }
+
+  private _clampPage(page: number): number {
+    const total = this.totalPages;
+    if (page < 1) return 1;
+    if (page > total) return total;
+    return page;
   }
 
 }

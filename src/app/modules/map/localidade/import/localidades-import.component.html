@@ -1,0 +1,65 @@
+<div class="card">
+  <h2 class="card-title">Importar CSV de localidades</h2>
+  <h5 class="card-sub-title">Carregue o CSV de metadata para gerar pontos em memória e exibir no mapa.</h5>
+  <div class="card-body">
+    <label class="form-label" for="csvFile">Arquivo CSV</label>
+    <input id="csvFile" type="file" accept=".csv" (change)="onFileSelected($event)" class="form-control" />
+
+    <div class="actions">
+      <button type="button" class="btn btn-primary" (click)="importarParaMemoria()" [disabled]="!localidades.length">
+        Importar para o mapa
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="limparImportacao()">
+        Limpar
+      </button>
+      <button type="button" class="btn btn-link" (click)="voltar()">Voltar</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" *ngIf="fileName">
+  <h2 class="card-title">Resumo</h2>
+  <div class="card-body">
+    <p><strong>Arquivo:</strong> {{ fileName }}</p>
+    <p><strong>Linhas lidas:</strong> {{ rawCount }}</p>
+    <p><strong>Pontos válidos:</strong> {{ localidades.length }}</p>
+  </div>
+</div>
+
+<div class="card" *ngIf="errors.length">
+  <h2 class="card-title">Avisos de importação</h2>
+  <div class="card-body">
+    <ul>
+      <li *ngFor="let error of errors">{{ error }}</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" *ngIf="localidades.length">
+  <h2 class="card-title">Pré-visualização</h2>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+          <th>Imagem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of localidades.slice(0, previewLimit)">
+          <td>{{ item.id }}</td>
+          <td>{{ item.nome }}</td>
+          <td>{{ item.latitude }}</td>
+          <td>{{ item.longitude }}</td>
+          <td>{{ item.url }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="preview-hint" *ngIf="localidades.length > previewLimit">
+      Exibindo {{ previewLimit }} de {{ localidades.length }} registros.
+    </p>
+  </div>
+</div>

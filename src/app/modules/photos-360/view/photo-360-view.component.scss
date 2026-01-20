@@ -39,6 +39,19 @@
 	gap: 0.75rem;
 }
 
+.viewer-step {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.viewer-step-label {
+	font-size: 0.85rem;
+	color: #5a5a5a;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
 .viewer-counter {
 	font-size: 0.85rem;
 	color: #5a5a5a;

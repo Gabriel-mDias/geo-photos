@@ -33,7 +33,13 @@ export class PannellumService {
       });
    }
 
-   async createViewer(container: HTMLElement, panoUrl: string): Promise<any> {
+   async createViewer(
+      container: HTMLElement,
+      panoUrl: string,
+      options?: {
+         showFullscreenCtrl?: boolean;
+      }
+   ): Promise<any> {
       if (!container) return null;
 
       const localCss = '/node_modules/pannellum/build/pannellum.css';
@@ -59,7 +65,12 @@ export class PannellumService {
       }
 
       try {
-         const viewer = (window as any).pannellum.viewer(container, { type: 'equirectangular', panorama: panoUrl, autoLoad: true });
+         const viewer = (window as any).pannellum.viewer(container, {
+            type: 'equirectangular',
+            panorama: panoUrl,
+            autoLoad: true,
+            ...(options ?? {}),
+         });
          return viewer;
       } catch (e) {
          console.error('Pannellum: failed to create viewer', e);

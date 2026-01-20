@@ -6,6 +6,15 @@ app-sidebar {
   flex: 1;
   height: 100vh;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-footer {
+  margin-top: auto;
+  padding: 16px 24px;
+  font-size: 0.85rem;
+  color: #6c757d;
 }
 
 @media (max-width: 900px) {

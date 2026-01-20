@@ -32,6 +32,11 @@
               },
               {
                 "glob": "**/*",
+                "input": "source",
+                "output": "source"
+              },
+              {
+                "glob": "**/*",
                 "input": "node_modules/leaflet/dist/images",
                 "output": "media"
               },
@@ -100,6 +105,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "source",
+                "output": "source"
               },
               {
                 "glob": "**/*",

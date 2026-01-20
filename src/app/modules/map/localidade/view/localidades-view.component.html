@@ -4,6 +4,7 @@
     <div class="card-footer">
         <button type="button" class="btn btn-primary"   (click)="clickLocalidades()">Exibir lista</button>
         <button type="button" class="btn btn-secondary" (click)="clickMap()">Exibir mapa</button>
+        <button type="button" class="btn btn-outline-primary" (click)="viewImport()">Importar CSV</button>
     </div>
 </div>
 
@@ -11,6 +12,32 @@
 <div class="card" *ngIf="loadLocalidades">
     <h2 class="card-title">Lista de localidades</h2>
     <div class="card-body">
+        <div class="table-controls" *ngIf="showLocalidadesList">
+            <div class="page-size">
+                <label for="pageSize" class="form-label">Itens por página</label>
+                <select id="pageSize" class="form-select form-select-sm" [value]="pageSize" (change)="onPageSizeChange($event)">
+                    <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+                </select>
+            </div>
+            <div class="page-nav">
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="goPreviousPage()" [disabled]="currentPage <= 1">
+                    Anterior
+                </button>
+                <span class="page-label">Página</span>
+                <input
+                    type="number"
+                    class="form-control form-control-sm page-input"
+                    [value]="currentPage"
+                    [min]="1"
+                    [max]="totalPages"
+                    (change)="onPageInput($event)"
+                />
+                <span class="page-total">de {{ totalPages }}</span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="goNextPage()" [disabled]="currentPage >= totalPages">
+                    Próxima
+                </button>
+            </div>
+        </div>
         <table class="table" *ngIf="showLocalidadesList; else noItem">
             <thead>
                 <tr>
@@ -23,7 +50,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of pontos">
+                <tr *ngFor="let item of pagedLocalidades">
                     <th scope="row">{{ item.id }}</th>
                     <td>{{ item.nome }}</td>
                     <td>{{ item.descricao }}</td>

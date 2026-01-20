@@ -20,6 +20,11 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
    */
   _localidades: Localidade[] = [];
   map?: L.Map;
+  private markerLayer?: L.LayerGroup;
+  private readonly maxMarkers = 2000;
+  private mapEventsBound = false;
+  private pendingRender?: number;
+  private lastCenteredCount = 0;
   selecionado?: Localidade;
   scene?: any;
   isFullScreen: boolean = false;
@@ -35,6 +40,8 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
    */
   @Input() set localidades(value: Localidade[]) {
     this._localidades = value ?? []
+    this._centerMapIfNeeded()
+    this._refreshMarkers()
   }
 
   get localidades(): Localidade[] {
@@ -54,6 +61,7 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this._initLeaflet()
     this._addingMarksByLocalidades()
+    this._centerMapIfNeeded()
   }
 
   private _initLeaflet(): void {
@@ -63,22 +71,101 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
 
     L.Icon.Default.imagePath = '/media/';
 
-    this.map = L.map('leaflet-map').setView([this.START_LATITUDE, this.START_LONGITUDE], 13);
+    this.map = L.map('leaflet-map', { preferCanvas: true }).setView([this.START_LATITUDE, this.START_LONGITUDE], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
+
+    this.markerLayer = L.layerGroup().addTo(this.map);
+    this._bindMapEvents();
   }
 
   private _addingMarksByLocalidades(): void {
-    L.layerGroup().clearLayers();
+    this._refreshMarkers();
+  }
 
-    this.localidades.forEach(p => {
-      L.marker([p.latitude, p.longitude])
-        .addTo(this.map!)
-        .bindTooltip(p.nome)
-        .on('click', () => this.onMarkerClick(p));
-    });
+  private _bindMapEvents(): void {
+    if (!this.map || this.mapEventsBound) return;
+    this.map.on('moveend zoomend', this._onMapMove);
+    this.mapEventsBound = true;
+  }
+
+  private _onMapMove = (): void => {
+    this._refreshMarkers();
+  };
+
+  private _refreshMarkers(): void {
+    if (!this.map || !this.markerLayer) return;
+
+    if (this.pendingRender) {
+      window.clearTimeout(this.pendingRender);
+      this.pendingRender = undefined;
+    }
+
+    this.pendingRender = window.setTimeout(() => {
+      this.pendingRender = undefined;
+      this.markerLayer?.clearLayers();
+
+      const bounds = this.map?.getBounds();
+      const paddedBounds = bounds ? bounds.pad(0.15) : null;
+      const list = paddedBounds
+        ? this.localidades.filter((p) => paddedBounds.contains([p.latitude, p.longitude]))
+        : this.localidades;
+
+      const step = list.length > this.maxMarkers ? Math.ceil(list.length / this.maxMarkers) : 1;
+      const limited: Localidade[] = [];
+      for (let i = 0; i < list.length; i += step) {
+        limited.push(list[i]);
+      }
+
+      const chunkSize = 300;
+      let index = 0;
+      const addChunk = () => {
+        if (!this.markerLayer) return;
+        const end = Math.min(index + chunkSize, limited.length);
+        for (let i = index; i < end; i += 1) {
+          const p = limited[i];
+          L.circleMarker([p.latitude, p.longitude], {
+            radius: 5,
+            color: '#1565c0',
+            weight: 1,
+            fillColor: '#1e88e5',
+            fillOpacity: 0.75,
+          })
+            .addTo(this.markerLayer)
+            .bindTooltip(p.nome)
+            .on('click', () => this.onMarkerClick(p));
+        }
+        index = end;
+        if (index < limited.length) {
+          window.setTimeout(addChunk, 0);
+        }
+      };
+
+      addChunk();
+    }, 80);
+  }
+
+  private _centerMapIfNeeded(): void {
+    if (!this.map || !this.localidades.length) return;
+    if (this.lastCenteredCount === this.localidades.length) return;
+
+    const totals = this.localidades.reduce(
+      (acc, p) => {
+        acc.lat += p.latitude;
+        acc.lng += p.longitude;
+        return acc;
+      },
+      { lat: 0, lng: 0 }
+    );
+
+    const avgLat = totals.lat / this.localidades.length;
+    const avgLng = totals.lng / this.localidades.length;
+    const zoom = this.map.getZoom() || 13;
+
+    this.map.setView([avgLat, avgLng], zoom, { animate: false });
+    this.lastCenteredCount = this.localidades.length;
   }
 
   onMarkerClick(ponto: Localidade): void {
@@ -106,6 +193,7 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.map?.off('moveend zoomend', this._onMapMove);
     this.map?.remove();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Localidade } from '../../../models/localidade.model';
@@ -16,11 +16,15 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   ponto?: Localidade | null = null;
   localidades: Localidade[] = [];
   currentIndex: number = -1;
+  isFullscreen: boolean = false;
+  stepOptions: number[] = [1, 5, 10, 20, 50, 100, 500, 1000];
+  stepSize: number = 1;
 
   @ViewChild('panoContainer', { static: false }) panoContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('overlayControls', { static: false }) overlayControls?: ElementRef<HTMLDivElement>;
   private pannellumViewer: any = null;
   private subscriptions = new Subscription();
+  private readonly fullscreenHandler = () => this._syncFullscreenState();
 
   constructor(
     private pannellumService: PannellumService,
@@ -70,6 +74,9 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.ponto && this.ponto.url) {
       this._instance360ViewerByUrl(this.ponto.url);
     }
+    document.addEventListener('fullscreenchange', this.fullscreenHandler);
+    document.addEventListener('webkitfullscreenchange', this.fullscreenHandler as EventListener);
+    this._syncFullscreenState();
   }
 
   private _instance360ViewerByUrl(url?: string): void {
@@ -78,9 +85,10 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.pannellumService.destroyViewer(this.pannellumViewer);
     const container = this.panoContainer.nativeElement;
-    this.pannellumService.createViewer(container, url).then((v: any) => {
+    this.pannellumService.createViewer(container, url, { showFullscreenCtrl: false }).then((v: any) => {
       this.pannellumViewer = v;
       this._attachOverlayControls();
+      this._syncFullscreenState();
     });
   }
 
@@ -97,9 +105,23 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     return `${this.currentIndex + 1} / ${this.localidades.length}`;
   }
 
+  @HostListener('window:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    if (event.defaultPrevented) return;
+    if (event.key === 'ArrowRight') {
+      this.goNext();
+      return;
+    }
+
+    if (event.key === 'ArrowLeft') {
+      this.goPrevious();
+    }
+  }
+
   goPrevious(): void {
     if (!this.hasPrevious) return;
-    const target = this.localidades[this.currentIndex - 1];
+    const targetIndex = Math.max(0, this.currentIndex - this.stepSize);
+    const target = this.localidades[targetIndex];
     if (target?.id) {
       this._navigateTo(target.id);
     }
@@ -107,7 +129,9 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   goNext(): void {
     if (!this.hasNext) return;
-    const target = this.localidades[this.currentIndex + 1];
+    const maxIndex = this.localidades.length - 1;
+    const targetIndex = Math.min(maxIndex, this.currentIndex + this.stepSize);
+    const target = this.localidades[targetIndex];
     if (target?.id) {
       this._navigateTo(target.id);
     }
@@ -133,6 +157,47 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  toggleFullscreen(): void {
+    if (!this.panoContainer) return;
+    const container = this.panoContainer.nativeElement as any;
+    const doc: any = document;
+
+    if (this._isFullscreenActive()) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => undefined);
+        return;
+      }
+
+      if (doc.webkitExitFullscreen) {
+        doc.webkitExitFullscreen();
+      }
+      return;
+    }
+
+    if (container.requestFullscreen) {
+      container.requestFullscreen().catch(() => undefined);
+      return;
+    }
+
+    if (container.webkitRequestFullscreen) {
+      container.webkitRequestFullscreen();
+    }
+  }
+
+  private _isFullscreenActive(): boolean {
+    const doc: any = document;
+    return Boolean(
+      document.fullscreenElement ||
+      doc.webkitFullscreenElement ||
+      doc.mozFullScreenElement ||
+      doc.msFullscreenElement
+    );
+  }
+
+  private _syncFullscreenState(): void {
+    this.isFullscreen = this._isFullscreenActive();
+  }
+
   private _syncCurrentIndex(): void {
     if (!this.ponto?.id || !this.localidades.length) {
       this.currentIndex = -1;
@@ -146,5 +211,7 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     this.pannellumService.destroyViewer(this.pannellumViewer);
+    document.removeEventListener('fullscreenchange', this.fullscreenHandler);
+    document.removeEventListener('webkitfullscreenchange', this.fullscreenHandler as EventListener);
   }
 }
