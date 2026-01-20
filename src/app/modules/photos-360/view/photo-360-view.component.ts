@@ -6,6 +6,7 @@ import { PannellumService } from '../../../services/pannellum.service';
 import { LocalidadeStore } from '../../../stores/localidade.store';
 import { SessionStorageService } from '../../../services/session-storage.service';
 import { RouterService } from '../../../services/router.service';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-photo-360-view',
@@ -19,10 +20,22 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   isFullscreen: boolean = false;
   stepOptions: number[] = [1, 5, 10, 20, 50, 100, 500, 1000];
   stepSize: number = 1;
+  private readonly fallbackLatitude = -23.55052;
+  private readonly fallbackLongitude = -46.63331;
 
   @ViewChild('panoContainer', { static: false }) panoContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('overlayControls', { static: false }) overlayControls?: ElementRef<HTMLDivElement>;
+  @ViewChild('miniMapOverlay', { static: false }) miniMapOverlay?: ElementRef<HTMLDivElement>;
+  @ViewChild('miniMapCanvas', { static: false }) miniMapCanvas?: ElementRef<HTMLDivElement>;
+  @ViewChild('miniMapToggleOverlay', { static: false }) miniMapToggleOverlay?: ElementRef<HTMLDivElement>;
   private pannellumViewer: any = null;
+  private miniMap?: L.Map;
+  miniMapBaseLayer: 'osm' | 'esri' = 'osm';
+  private miniMapOsmLayer?: L.TileLayer;
+  private miniMapEsriLayer?: L.TileLayer;
+  private miniMapActiveLayer?: L.TileLayer;
+  private miniMapLayer?: L.LayerGroup;
+  showMiniMap: boolean = true;
   private subscriptions = new Subscription();
   private readonly fullscreenHandler = () => this._syncFullscreenState();
 
@@ -40,10 +53,12 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         next: (data) => {
           this.localidades = data ?? [];
           this._syncCurrentIndex();
+          this._updateMiniMap();
         },
         error: () => {
           this.localidades = [];
           this._syncCurrentIndex();
+          this._updateMiniMap();
         }
       })
     );
@@ -57,6 +72,7 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           next: (p) => {
             this.ponto = p;
             this._syncCurrentIndex();
+            this._updateMiniMap();
             if (this.ponto?.url) {
               this._instance360ViewerByUrl(this.ponto.url);
             }
@@ -87,7 +103,9 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     const container = this.panoContainer.nativeElement;
     this.pannellumService.createViewer(container, url, { showFullscreenCtrl: false }).then((v: any) => {
       this.pannellumViewer = v;
-      this._attachOverlayControls();
+      this._attachOverlays();
+      this._initMiniMap();
+      this._updateMiniMap();
       this._syncFullscreenState();
     });
   }
@@ -147,14 +165,104 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.routerService.navigateTo(`photos-360/view/${targetId}`);
   }
 
-  private _attachOverlayControls(): void {
-    if (!this.panoContainer || !this.overlayControls) return;
+  private _attachOverlays(): void {
+    if (!this.panoContainer) return;
     const container = this.panoContainer.nativeElement;
-    const overlay = this.overlayControls.nativeElement;
+    const overlays = [
+      this.overlayControls?.nativeElement,
+      this.miniMapOverlay?.nativeElement,
+      this.miniMapToggleOverlay?.nativeElement
+    ].filter(Boolean) as HTMLDivElement[];
 
-    if (overlay.parentElement !== container) {
-      container.appendChild(overlay);
+    overlays.forEach((overlay) => {
+      if (overlay.parentElement !== container) {
+        container.appendChild(overlay);
+      }
+    });
+  }
+
+  private _initMiniMap(): void {
+    if (this.miniMap || !this.miniMapCanvas) return;
+    const element = this.miniMapCanvas.nativeElement;
+
+    this.miniMap = L.map(element, {
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      dragging: true
+    });
+
+    this.miniMapOsmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    });
+    this.miniMapEsriLayer = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: '© Esri'
+      }
+    );
+    this._applyMiniMapBaseLayer(this.miniMapBaseLayer);
+
+    this.miniMapLayer = L.layerGroup().addTo(this.miniMap);
+    this._updateMiniMap();
+  }
+
+  private _updateMiniMap(): void {
+    if (!this.miniMap || !this.miniMapLayer) return;
+    const center = this._getMiniMapCenter();
+    const hasPoint = Boolean(this.ponto);
+    const layer = this.miniMapLayer;
+
+    layer.clearLayers();
+
+    if (this.localidades.length) {
+      const currentId = this.ponto?.id ? String(this.ponto.id) : null;
+
+      this.localidades.forEach((p) => {
+        const isSelected = currentId !== null && String(p.id) === currentId;
+        const marker = L.circleMarker([p.latitude, p.longitude], {
+          radius: isSelected ? 7 : 4,
+          color: isSelected ? '#ff6f00' : '#1e88e5',
+          weight: isSelected ? 2 : 1,
+          fillColor: isSelected ? '#ffca28' : '#42a5f5',
+          fillOpacity: isSelected ? 0.9 : 0.75
+        }).addTo(layer);
+
+        if (p.nome) {
+          marker.bindTooltip(p.nome, { direction: 'top' });
+        }
+
+        if (p.id) {
+          marker.on('click', () => this._navigateTo(String(p.id)));
+        }
+      });
     }
+
+    this.miniMap.setView(center, hasPoint ? 16 : 12, { animate: false });
+    this._refreshMiniMapSize();
+  }
+
+  private _getMiniMapCenter(): [number, number] {
+    if (this.ponto) {
+      return [this.ponto.latitude, this.ponto.longitude];
+    }
+
+    if (this.localidades.length) {
+      const totals = this.localidades.reduce(
+        (acc, p) => {
+          acc.lat += p.latitude;
+          acc.lng += p.longitude;
+          return acc;
+        },
+        { lat: 0, lng: 0 }
+      );
+      return [totals.lat / this.localidades.length, totals.lng / this.localidades.length];
+    }
+
+    return [this.fallbackLatitude, this.fallbackLongitude];
   }
 
   toggleFullscreen(): void {
@@ -196,6 +304,61 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _syncFullscreenState(): void {
     this.isFullscreen = this._isFullscreenActive();
+    this._refreshMiniMapSize();
+  }
+
+  private _refreshMiniMapSize(): void {
+    if (!this.miniMap) return;
+    setTimeout(() => {
+      this.miniMap?.invalidateSize();
+    }, 150);
+  }
+
+  zoomMiniMapIn(): void {
+    this.miniMap?.zoomIn();
+  }
+
+  zoomMiniMapOut(): void {
+    this.miniMap?.zoomOut();
+  }
+
+  toggleMiniMap(): void {
+    this.showMiniMap = !this.showMiniMap;
+    if (this.showMiniMap) {
+      this._refreshMiniMapSize();
+    }
+  }
+
+  setMiniMapBaseLayer(kind: 'osm' | 'esri'): void {
+    if (this.miniMapBaseLayer === kind) return;
+    this.miniMapBaseLayer = kind;
+    this._applyMiniMapBaseLayer(kind);
+  }
+
+  centerMiniMapOnSelected(): void {
+    if (!this.miniMap) return;
+    const center = this._getMiniMapCenter();
+    this.miniMap.panTo(center, { animate: true });
+  }
+
+  resetMiniMapView(): void {
+    if (!this.miniMap) return;
+    const center = this._getMiniMapCenter();
+    const hasPoint = Boolean(this.ponto);
+    this.miniMap.setView(center, hasPoint ? 16 : 12, { animate: false });
+  }
+
+  private _applyMiniMapBaseLayer(kind: 'osm' | 'esri'): void {
+    if (!this.miniMap) return;
+    const next = kind === 'esri' ? this.miniMapEsriLayer : this.miniMapOsmLayer;
+    if (!next) return;
+
+    if (this.miniMapActiveLayer && this.miniMap.hasLayer(this.miniMapActiveLayer)) {
+      this.miniMap.removeLayer(this.miniMapActiveLayer);
+    }
+
+    next.addTo(this.miniMap);
+    this.miniMapActiveLayer = next;
   }
 
   private _syncCurrentIndex(): void {
@@ -209,9 +372,10 @@ export class Photo360ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-    this.pannellumService.destroyViewer(this.pannellumViewer);
     document.removeEventListener('fullscreenchange', this.fullscreenHandler);
     document.removeEventListener('webkitfullscreenchange', this.fullscreenHandler as EventListener);
+    this.pannellumService.destroyViewer(this.pannellumViewer);
+    this.miniMap?.remove();
+    this.subscriptions.unsubscribe();
   }
 }

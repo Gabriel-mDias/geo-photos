@@ -1,6 +1,14 @@
 <div [ngClass]="isFullScreen ? 'layout-fullscreen' : 'layout'">
   <!-- Mapa -->
   <div id="leaflet-map" class="map"></div>
+  <div class="map-base-toggle">
+    <button type="button" class="btn btn-sm btn-light" [class.active]="baseLayer === 'osm'" (click)="setBaseLayer('osm')">
+      OSM
+    </button>
+    <button type="button" class="btn btn-sm btn-light" [class.active]="baseLayer === 'esri'" (click)="setBaseLayer('esri')">
+      Satélite
+    </button>
+  </div>
 
   <!-- Overlay do panorama -->
   <div class="viewer-overlay" *ngIf="selecionado">

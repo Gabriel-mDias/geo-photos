@@ -35,6 +35,12 @@
             >
                 Anterior
             </button>
+            <div class="viewer-step-overlay" *ngIf="localidades.length > 1">
+                <label for="stepSizeOverlay" class="viewer-step-label">Pular</label>
+                <select id="stepSizeOverlay" class="form-select form-select-sm" [(ngModel)]="stepSize">
+                    <option *ngFor="let step of stepOptions" [ngValue]="step">{{ step }}</option>
+                </select>
+            </div>
             <button
                 *ngIf="localidades.length > 1"
                 type="button"
@@ -46,6 +52,58 @@
             </button>
             <button type="button" class="btn btn-outline-light nav-btn" (click)="toggleFullscreen()">
                 {{ isFullscreen ? 'Sair da tela cheia' : 'Tela cheia' }}
+            </button>
+        </div>
+        <div #miniMapOverlay class="viewer-mini-map" [class.is-hidden]="!showMiniMap">
+            <div class="viewer-mini-map-header">
+                <div class="viewer-mini-map-title-row">
+                    <span class="viewer-mini-map-title">Mapa</span>
+                    <div class="viewer-mini-map-zoom">
+                        <button type="button" class="mini-map-toggle" (click)="toggleMiniMap()">
+                            Ocultar
+                        </button>
+                        <button
+                            type="button"
+                            class="mini-map-toggle"
+                            [class.active]="miniMapBaseLayer === 'osm'"
+                            (click)="setMiniMapBaseLayer('osm')"
+                        >
+                            OSM
+                        </button>
+                        <button
+                            type="button"
+                            class="mini-map-toggle"
+                            [class.active]="miniMapBaseLayer === 'esri'"
+                            (click)="setMiniMapBaseLayer('esri')"
+                        >
+                            Sat
+                        </button>
+                        <button type="button" class="mini-map-btn" (click)="centerMiniMapOnSelected()" aria-label="centralizar">
+                            ⊕
+                        </button>
+                        <button type="button" class="mini-map-btn" (click)="resetMiniMapView()" aria-label="resetar zoom">
+                            ↺
+                        </button>
+                        <button type="button" class="mini-map-btn" (click)="zoomMiniMapIn()" aria-label="zoom in">
+                            +
+                        </button>
+                        <button type="button" class="mini-map-btn" (click)="zoomMiniMapOut()" aria-label="zoom out">
+                            −
+                        </button>
+                    </div>
+                </div>
+                <span class="viewer-mini-map-name" *ngIf="ponto?.nome">{{ ponto?.nome }}</span>
+            </div>
+            <div #miniMapCanvas class="viewer-mini-map-canvas" role="region" aria-label="mini mapa"></div>
+        </div>
+        <div #miniMapToggleOverlay class="mini-map-toggle-overlay">
+            <button
+                *ngIf="!showMiniMap"
+                type="button"
+                class="mini-map-show-btn"
+                (click)="toggleMiniMap()"
+            >
+                Mostrar mapa
             </button>
         </div>
     </div>

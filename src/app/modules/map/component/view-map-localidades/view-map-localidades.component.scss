@@ -5,6 +5,7 @@
 
 .layout {
   height: 65vh;
+  position: relative;
 }
 
 .map {
@@ -18,6 +19,21 @@
   background: #000;
   display: flex;
   flex-direction: column;
+}
+
+.map-base-toggle {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.4rem;
+  z-index: 1000;
+}
+
+.map-base-toggle .btn.active {
+  background: #001a51;
+  color: #fff;
+  border-color: #001a51;
 }
 
 .viewer-header {

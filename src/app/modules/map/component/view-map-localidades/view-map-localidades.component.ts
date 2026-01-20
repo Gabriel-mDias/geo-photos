@@ -25,6 +25,10 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
   private mapEventsBound = false;
   private pendingRender?: number;
   private lastCenteredCount = 0;
+  baseLayer: 'osm' | 'esri' = 'osm';
+  private osmLayer?: L.TileLayer;
+  private esriLayer?: L.TileLayer;
+  private activeBaseLayer?: L.TileLayer;
   selecionado?: Localidade;
   scene?: any;
   isFullScreen: boolean = false;
@@ -73,9 +77,16 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
 
     this.map = L.map('leaflet-map', { preferCanvas: true }).setView([this.START_LATITUDE, this.START_LONGITUDE], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    this.osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
-    }).addTo(this.map);
+    });
+    this.esriLayer = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: '© Esri'
+      }
+    );
+    this._applyBaseLayer(this.baseLayer);
 
     this.markerLayer = L.layerGroup().addTo(this.map);
     this._bindMapEvents();
@@ -190,6 +201,25 @@ export class ViewMapLocalidadesComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.map?.invalidateSize();
     }, 150);
+  }
+
+  setBaseLayer(kind: 'osm' | 'esri'): void {
+    if (this.baseLayer === kind) return;
+    this.baseLayer = kind;
+    this._applyBaseLayer(kind);
+  }
+
+  private _applyBaseLayer(kind: 'osm' | 'esri'): void {
+    if (!this.map) return;
+    const next = kind === 'esri' ? this.esriLayer : this.osmLayer;
+    if (!next) return;
+
+    if (this.activeBaseLayer && this.map.hasLayer(this.activeBaseLayer)) {
+      this.map.removeLayer(this.activeBaseLayer);
+    }
+
+    next.addTo(this.map);
+    this.activeBaseLayer = next;
   }
 
   ngOnDestroy(): void {
